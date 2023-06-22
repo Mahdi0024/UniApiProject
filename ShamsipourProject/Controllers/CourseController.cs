@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ApiProject.Dtos;
-using ApiProject.Services;
-using System.Dynamic;
+﻿using ApiProject.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ApiProject.Controllers;
 
@@ -9,6 +7,7 @@ namespace ApiProject.Controllers;
 public class CourseController : ControllerBase
 {
     private readonly CourseService _courseService;
+
     public CourseController(CourseService courseService)
     {
         _courseService = courseService;
@@ -20,6 +19,7 @@ public class CourseController : ControllerBase
         var courses = await _courseService.GetCourses(searchString, page);
         return Ok(courses);
     }
+
     [HttpGet("/")]
     public async Task<IActionResult> GetCourse(Guid id)
     {

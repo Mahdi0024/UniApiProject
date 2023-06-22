@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ApiProject.Data;
+﻿using ApiProject.Data;
 using ApiProject.Dtos;
 using ApiProject.Exceptions;
-using ApiProject.Services;
-using Azure.Identity;
 using ApiProject.Models;
+using ApiProject.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ApiProject.Controllers;
 
@@ -13,12 +12,13 @@ public class AuthController : ControllerBase
 {
     private readonly ApiDbContext _db;
     private readonly AuthService _authService;
+
     public AuthController(ApiDbContext db, AuthService authService)
     {
         _db = db;
         _authService = authService;
-
     }
+
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginModel credentials)
     {
@@ -30,8 +30,8 @@ public class AuthController : ControllerBase
         }
 
         return Ok(new { Token = _authService.GenerateJsonWebToken(user) });
-
     }
+
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterModel data)
     {
@@ -71,5 +71,4 @@ public class AuthController : ControllerBase
 
         return Ok(new { Token = _authService.GenerateJsonWebToken(newUser) });
     }
-
 }

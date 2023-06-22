@@ -16,6 +16,7 @@ public class CourseProgress
 
     [ForeignKey("EpisodeId")]
     public Guid EpisodeId { get; set; }
+
     public bool Completed { get; set; }
     public DateTime CompleteDate { get; set; }
 }

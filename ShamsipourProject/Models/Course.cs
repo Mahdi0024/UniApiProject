@@ -13,6 +13,7 @@ public class Course
 
     [ForeignKey("CategoryId")]
     public Guid CategoryId { get; set; }
+
     public string Title { get; set; } = default(string)!;
     public string Description { get; set; } = default(string)!;
     public string ShortDescription { get; set; } = default(string)!;

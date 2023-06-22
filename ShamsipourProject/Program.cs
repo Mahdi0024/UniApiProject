@@ -1,10 +1,9 @@
+using ApiProject.Data;
+using ApiProject.Swagger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using ApiProject.Data;
-using ApiProject.Services;
-using ApiProject.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Text;
 
@@ -49,9 +48,6 @@ services.AddDbContext<ApiDbContext>(o => o.UseSqlServer(config.GetConnectionStri
 
 //services.AddSingleton<CourseService>();
 
-
-
-
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -59,7 +55,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 
 app.UseHttpsRedirection();
 

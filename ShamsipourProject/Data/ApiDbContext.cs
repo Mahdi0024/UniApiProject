@@ -1,10 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using ApiProject.Models;
+﻿using ApiProject.Models;
+using Microsoft.EntityFrameworkCore;
 using File = ApiProject.Models.File;
 
 namespace ApiProject.Data;
 
-public class ApiDbContext: DbContext
+public class ApiDbContext : DbContext
 {
     public DbSet<User> Users { get; set; }
     public DbSet<CourseProgress> CourseProgresses { get; set; }
@@ -13,9 +13,7 @@ public class ApiDbContext: DbContext
     public DbSet<Course> Courses { get; set; }
     public DbSet<Category> Categories { get; set; }
 
-    public ApiDbContext(DbContextOptions options):base(options)
+    public ApiDbContext(DbContextOptions options) : base(options)
     {
-        
     }
-
 }

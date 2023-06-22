@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ApiProject.Data;
+using ApiProject.Dtos;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
-using ApiProject.Data;
-using ApiProject.Dtos;
 using FileIO = System.IO.File;
 
 namespace ApiProject.Controllers;
@@ -11,7 +11,8 @@ namespace ApiProject.Controllers;
 public class FileController : ControllerBase
 {
     private readonly ApiDbContext _db;
-    const string filesDirectory = "Files";
+    private const string filesDirectory = "Files";
+
     public FileController(ApiDbContext db)
     {
         _db = db;
@@ -20,19 +21,21 @@ public class FileController : ControllerBase
             Directory.CreateDirectory(filesDirectory);
         }
     }
+
     [HttpGet("Banners")]
     public async Task<IActionResult> GetBanners()
     {
         var banners = await _db.Banners.OrderBy(b => b.Index)
-            .Select(b => new BannerDto 
+            .Select(b => new BannerDto
             {
                 BannerId = b.BannerID,
-                FileId = b.File.FileId, Index = b.Index 
+                FileId = b.File.FileId,
+                Index = b.Index
             })
             .ToListAsync();
         return Ok(banners);
-
     }
+
     [HttpGet("File")]
     public async Task<IActionResult> GetFile(Guid fileId)
     {
@@ -53,5 +56,4 @@ public class FileController : ControllerBase
 
         return base.File(fileStream, contentType, file.FileName, true);
     }
-
 }

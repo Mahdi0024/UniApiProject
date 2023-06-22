@@ -1,7 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using ApiProject.Data;
+﻿using ApiProject.Data;
 using ApiProject.Dtos;
-using ApiProject.Models;
 
 namespace ApiProject.Services;
 
