@@ -1,10 +1,11 @@
 ﻿using ApiProject.Data;
-using ApiProject.Dtos;
 using ApiProject.Exceptions;
 using ApiProject.Models;
 using ApiProject.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using UniApiProject.Models.Requests;
+using UniApiProject.Models.Responses;
 
 namespace ApiProject.Controllers;
 
@@ -20,7 +21,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login(LoginModel credentials)
+    public async Task<IActionResult> Login(LoginRequest credentials)
     {
         var user = await _db.Users.Where(u => u.Username.ToLower() == credentials.Username.ToLower())
             .FirstOrDefaultAsync();
@@ -29,11 +30,19 @@ public class AuthController : ControllerBase
             throw new AuthException("Invalid username or password");
         }
 
-        return Ok(new { Token = _authService.GenerateJsonWebToken(user) });
+
+        var token = _authService.GenerateJsonWebToken(user);
+        var response = new LoginResponse(new UserInfo(user.UserId,
+                                                      user.FirstName,
+                                                      user.LastName,
+                                                      user.Username
+                                                      ),
+                                                        token);
+        return Ok(response);
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register(RegisterModel data)
+    public async Task<IActionResult> Register(RegisterRequest data)
     {
         var dupCheck = await _db.Users
             .Where(u => u.Username.ToLower() == data.Username.ToLower() || u.Email == data.Email.ToLower())
@@ -69,6 +78,6 @@ public class AuthController : ControllerBase
         _db.Users.Add(newUser);
         await _db.SaveChangesAsync();
 
-        return Ok(new { Token = _authService.GenerateJsonWebToken(newUser) });
+        return Ok();
     }
 }

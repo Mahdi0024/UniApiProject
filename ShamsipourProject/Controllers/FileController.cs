@@ -1,8 +1,8 @@
 ﻿using ApiProject.Data;
-using ApiProject.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
+using UniApiProject.Models.Responses;
 using FileIO = System.IO.File;
 
 namespace ApiProject.Controllers;
@@ -22,21 +22,16 @@ public class FileController : ControllerBase
         }
     }
 
-    [HttpGet("Banners")]
+    [HttpGet("banners")]
     public async Task<IActionResult> GetBanners()
     {
         var banners = await _db.Banners.OrderBy(b => b.Index)
-            .Select(b => new BannerDto
-            {
-                BannerId = b.BannerID,
-                FileId = b.File.FileId,
-                Index = b.Index
-            })
+            .Select(b => new BannerResponse(b.BannerID,b.File.FileId,b.Index))
             .ToListAsync();
         return Ok(banners);
     }
 
-    [HttpGet("File")]
+    [HttpGet("file")]
     public async Task<IActionResult> GetFile(Guid fileId)
     {
         var file = await _db.Files.FindAsync(fileId);

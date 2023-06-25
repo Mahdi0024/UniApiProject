@@ -1,43 +1,49 @@
 ﻿using ApiProject.Data;
-using ApiProject.Dtos;
+using Microsoft.EntityFrameworkCore;
+using UniApiProject.Models.Responses;
 
 namespace ApiProject.Services;
 
-public record CourseService(ApiDbContext dbContext)
+public class CourseService
 {
-    public async Task<IEnumerable<ShortCourseDto>> GetCourses(string searchText, int page)
+    private ApiDbContext _db;
+
+    public CourseService(ApiDbContext db)
     {
-        throw new NotImplementedException();
-        //var courses = dbContext.Courses.AsQueryable();
-        //if (!String.IsNullOrEmpty(searchText))
-        //{
-        //    courses = courses.Where(c => c.Title.Contains(searchText));
-        //}
-        //if (page > 0)
-        //{
-        //    courses = courses.Skip(page * 15);
-        //}
-        //var mappedCourses = await courses.Take(15)
-        //    .Select(c =>
-        //        new ShortCourseDto
-        //        {
-        //            Title = c.Title,
-        //            Category = c.Category.Name,
-        //            DateAdded = c.DateAdded,
-        //            DateUpdated = c.DateUpdated,
-        //            Id = c.CourseId,
-        //            Discount = c.Discount,
-        //            Price = c.Price,
-        //            ShortDescription = c.ShortDescription,
-        //            Teacher = c.Teacher.FirstName + " " + c.Teacher.LastName,
-        //            ViewCount = c.ViewCount,
-        //            Image = c.Image
-        //        }).ToListAsync();
-        //foreach (var course in mappedCourses)
-        //{
-        //    var courseImageBytes = File.ReadAllBytes(course.Image);
-        //    course.Image = Convert.ToBase64String(courseImageBytes);
-        //}
-        //return mappedCourses;
+        _db = db;
+    }
+
+    public async Task<IEnumerable<CourseItemResponse>> GetCourses(string searchText, int page)
+    {
+        var courses = _db.Courses.AsQueryable();
+        if (!String.IsNullOrEmpty(searchText))
+        {
+            courses = courses.Where(c => c.Title.Contains(searchText));
+        }
+        if (page > 0)
+        {
+            courses = courses.Skip(page * 15);
+        }
+        var mappedCourses = await courses.Select(c =>
+                    new CourseItemResponse(
+                         new TeacherInfo(
+                              c.TeacherId,
+                             _db.Users.Where(u => u.UserId == c.TeacherId)
+                                      .Select(t => t.FirstName + " " + t.LastName)
+                                      .First()),
+                         new CourseInfo(
+                               c.CourseId,
+                               c.Title,
+                               c.ShortDescription,
+                               c.Category.Name,
+                               c.Price,
+                               c.Discount,
+                               c.DateAdded,
+                               c.DateUpdated,
+                               c.ViewCount,
+                               c.Image.FileId)))
+                                         .Take(15)
+                                         .ToListAsync();
+        return mappedCourses;
     }
 }

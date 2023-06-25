@@ -12,12 +12,12 @@ public class Course
     public Guid TeacherId { get; set; }
 
     [ForeignKey("CategoryId")]
-    public Guid CategoryId { get; set; }
+    public Category Category { get; set; } = null!;
 
-    public string Title { get; set; } = default(string)!;
-    public string Description { get; set; } = default(string)!;
-    public string ShortDescription { get; set; } = default(string)!;
-    public string Image { get; set; } = default(string)!;
+    public string Title { get; set; } = null!;
+    public string Description { get; set; } = null!;
+    public string ShortDescription { get; set; } = null!;
+    public File Image { get; set; } = null!;
     public long Price { get; set; }
     public int Discount { get; set; }
     public ICollection<Episode> Episodes { get; set; } = new List<Episode>();
