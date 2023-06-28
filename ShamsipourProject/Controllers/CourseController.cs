@@ -1,5 +1,10 @@
-﻿using ApiProject.Services;
+﻿using ApiProject.Models;
+using ApiProject.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using UniApiProject.Helpers;
+using UniApiProject.Models.Requests;
+using UniApiProject.Models.Responses;
 
 namespace ApiProject.Controllers;
 
@@ -14,15 +19,33 @@ public class CourseController : ControllerBase
     }
 
     [HttpGet("/search")]
-    public async Task<IActionResult> GetCourses(string searchString, int page = 0)
+    public async Task<IEnumerable<CourseItemResponse>> GetCourses(string search, int page = 0)
     {
-        var courses = await _courseService.GetCourses(searchString, page);
-        return Ok(courses);
+        return await _courseService.GetCourses(search, page);
     }
 
-    [HttpGet("/")]
-    public async Task<IActionResult> GetCourse(Guid id)
+    [HttpGet("/get")]
+    public async Task<CourseItemResponse> GetCourse(Guid id)
     {
-        throw new NotImplementedException();
+        return await _courseService.GetCourse(id);
+        
     }
+    [HttpPost("/create")]
+    [Authorize(Roles = "Teacher")]
+    public async Task<Course> CreateCourse(CreateCourseRequest request)
+    {
+        var teacherId = HttpContext.User.GetUserId();
+        return await _courseService.CreateCourse(teacherId, request);
+
+    }
+
+    [HttpPost("/setImage")]
+    [Authorize(Roles = "Teacher")]
+    public async Task<IActionResult> SetCourseImage(SetCourseImageRequest request)
+    {
+        await _courseService.SetCourseImage(request);
+        return Ok();
+    }
+
+
 }

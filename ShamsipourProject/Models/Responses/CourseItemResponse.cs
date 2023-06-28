@@ -13,4 +13,7 @@ public record CourseInfo(Guid CourseId,
                          DateTime Added,
                          DateTime Updated,
                          int Views,
-                         Guid ImageFileId);
+                         Guid ImageFileId,
+                         IEnumerable<EpisodeInfo> Episodes);
+
+public record EpisodeInfo(Guid Id,int Index,string Description,bool Free);
