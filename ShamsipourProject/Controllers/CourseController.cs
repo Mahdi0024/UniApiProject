@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using UniApiProject.Helpers;
 using UniApiProject.Models.Requests;
 using UniApiProject.Models.Responses;
+using UniApiProject.Services;
 
 namespace ApiProject.Controllers;
 
@@ -12,16 +13,18 @@ namespace ApiProject.Controllers;
 public class CourseController : ControllerBase
 {
     private readonly CourseService _courseService;
+    private readonly FileService _fileService;
 
-    public CourseController(CourseService courseService)
+    public CourseController(CourseService courseService, FileService fileService)
     {
         _courseService = courseService;
+        _fileService = fileService;
     }
 
     [HttpGet("/search")]
-    public async Task<IEnumerable<CourseItemResponse>> GetCourses(string search, int page = 0)
+    public async Task<IEnumerable<CourseItemResponse>> GetCourses(string? search,Guid? categoryId, int page = 0)
     {
-        return await _courseService.GetCourses(search, page);
+        return await _courseService.GetCourses(search,categoryId, page);
     }
 
     [HttpGet("/get")]

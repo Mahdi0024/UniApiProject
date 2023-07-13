@@ -9,6 +9,7 @@ using UniApiProject.Models.Responses;
 
 namespace ApiProject.Controllers;
 
+[Route("Api/Auth")]
 public class AuthController : ControllerBase
 {
     private readonly ApiDbContext _db;

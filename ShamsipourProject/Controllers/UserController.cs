@@ -9,10 +9,12 @@ using UniApiProject.Services;
 
 namespace ApiProject.Controllers;
 
+[Route("Api/User")]
 public class UserController:ControllerBase
 {
     private readonly ApiDbContext _db;
     private readonly UserService _userService;
+
     public UserController(ApiDbContext db,UserService userService)
     {
         _db = db;

@@ -14,8 +14,8 @@ public class CourseProgress
     [ForeignKey("CourseId")]
     public Guid CourseId { get; set; }
 
-    [ForeignKey("EpisodeId")]
-    public Guid EpisodeId { get; set; }
+    [ForeignKey("LectureId")]
+    public Guid LectureId { get; set; }
 
     public bool Completed { get; set; }
     public DateTime CompleteDate { get; set; }

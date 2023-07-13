@@ -10,7 +10,8 @@ public class ApiDbContext : DbContext
     public DbSet<CourseProgress> CourseProgresses { get; set; }
     public DbSet<Banner> Banners { get; set; }
     public DbSet<File> Files { get; set; }
-    public DbSet<Course> Courses { get; set; }
+    public DbSet<Course> Cources { get; set; }
+    public DbSet<Lecture> Lectures { get; set; }
     public DbSet<Category> Categories { get; set; }
 
     public ApiDbContext(DbContextOptions options) : base(options)

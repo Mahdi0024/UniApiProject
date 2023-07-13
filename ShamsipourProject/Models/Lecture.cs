@@ -3,10 +3,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ApiProject.Models;
 
-public class Episode
+public class Lecture
 {
     [Key]
-    public Guid EpisodeId { get; set; }
+    public Guid LectureId { get; set; }
 
     [ForeignKey("CourseId")]
     public Guid CourseId { get; set; }

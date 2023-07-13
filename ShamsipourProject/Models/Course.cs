@@ -20,7 +20,7 @@ public class Course
     public File Image { get; set; } = null!;
     public long Price { get; set; }
     public int Discount { get; set; }
-    public ICollection<Episode> Episodes { get; set; } = new List<Episode>();
+    public ICollection<Lecture> Lectures { get; set; } = new List<Lecture>();
     public DateTime DateAdded { get; set; }
     public DateTime DateUpdated { get; set; }
     public int ViewCount { get; set; }
