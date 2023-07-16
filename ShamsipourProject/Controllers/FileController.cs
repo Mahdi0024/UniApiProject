@@ -1,4 +1,4 @@
-﻿using ApiProject.Data;
+﻿using UniApiProject.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
@@ -6,7 +6,7 @@ using UniApiProject.Models.Responses;
 using UniApiProject.Services;
 using FileIO = System.IO.File;
 
-namespace ApiProject.Controllers;
+namespace UniApiProject.Controllers;
 
 [Route("Api/File")]
 public class FileController : ControllerBase
@@ -20,7 +20,7 @@ public class FileController : ControllerBase
         _fileService = fileService;
     }
 
-    [HttpGet("/banners")]
+    [HttpGet("banners")]
     public async Task<IActionResult> GetBanners()
     {
         var banners = await _db.Banners.OrderBy(b => b.Index)
@@ -29,7 +29,7 @@ public class FileController : ControllerBase
         return Ok(banners);
     }
 
-    [HttpGet("/file")]
+    [HttpGet("getFile")]
     public async Task<IActionResult> GetFile(Guid fileId)
     {
         var file = await _fileService.GetFileInfo(fileId);

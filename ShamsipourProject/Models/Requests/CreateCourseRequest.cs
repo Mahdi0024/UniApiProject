@@ -5,4 +5,6 @@ public record CreateCourseRequest(string Title,
     string ShortDescription,
     long Price,
     int Discount,
-    Guid CategoryId);
+    Guid CategoryId,
+    LectureInfo[] Lectures);
+public record LectureInfo(string Description,TimeSpan Duration,bool Free, int Index);

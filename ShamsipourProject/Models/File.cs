@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ApiProject.Models;
+namespace UniApiProject.Models;
 
 public class File
 {

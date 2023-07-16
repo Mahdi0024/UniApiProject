@@ -1,7 +1,7 @@
-﻿using ApiProject.Data;
-using ApiProject.Models;
+﻿using UniApiProject.Data;
+using UniApiProject.Models;
 using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
-using File = ApiProject.Models.File;
+using File = UniApiProject.Models.File;
 
 namespace UniApiProject.Services;
 
@@ -10,18 +10,18 @@ public class FileService
     private readonly string _filesDirectory;
     private readonly string _tempDirectory;
     private readonly ApiDbContext _db;
-    public FileService(string filesDirectory, string tempDirectory, ApiDbContext db)
+    public FileService(FileServiceConfiguration configuration, ApiDbContext db)
     {
         _db = db;
-        _filesDirectory = filesDirectory;
-        if (!Directory.Exists(filesDirectory))
+        _filesDirectory = configuration.FileDirectory;
+        if (!Directory.Exists(_filesDirectory))
         {
-            Directory.CreateDirectory(filesDirectory);
+            Directory.CreateDirectory(_filesDirectory);
         }
-        _tempDirectory = tempDirectory;
-        if (!Directory.Exists(tempDirectory))
+        _tempDirectory = configuration.TempDirectory;
+        if (!Directory.Exists(_tempDirectory))
         {
-            Directory.CreateDirectory(tempDirectory);
+            Directory.CreateDirectory(_tempDirectory);
         }
     }
 
@@ -63,6 +63,16 @@ public class FileService
             {
                 System.IO.File.Delete(tempFileName);
             }
+        }
+    }
+
+
+    public void DeleteFile(File file)
+    {
+        var fileName = Path.Combine(_filesDirectory, file.FileName);
+        if (System.IO.File.Exists(fileName))
+        {
+            System.IO.File.Delete(fileName);
         }
     }
 

@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using UniApiProject.Exceptions;
+using UniApiProject.Exeptions;
 
 namespace UniApiProject.Helpers;
 

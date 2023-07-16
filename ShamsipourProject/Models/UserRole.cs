@@ -1,4 +1,4 @@
-﻿namespace ApiProject.Models;
+﻿namespace UniApiProject.Models;
 
 public enum UserRole
 {

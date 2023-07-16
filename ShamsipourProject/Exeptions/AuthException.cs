@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace ApiProject.Exceptions
+namespace UniApiProject.Exeptions
 {
     [Serializable]
     internal class AuthException : Exception

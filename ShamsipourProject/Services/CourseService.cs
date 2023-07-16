@@ -1,14 +1,14 @@
-﻿using ApiProject.Data;
-using ApiProject.Models;
+﻿using UniApiProject.Data;
+using UniApiProject.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using UniApiProject.Exceptions;
+using UniApiProject.Exeptions;
 using UniApiProject.Models.Requests;
 using UniApiProject.Models.Responses;
 using UniApiProject.Services;
 
-namespace ApiProject.Services;
+namespace UniApiProject.Services;
 
 public class CourseService
 {
@@ -20,7 +20,7 @@ public class CourseService
         _fileService = fileService;
     }
 
-    public async Task<IEnumerable<CourseItemResponse>> GetCourses(string? searchText,Guid? categoryId, int page)
+    public async Task<IEnumerable<CourseItemResponse>> GetCourses(string? searchText, Guid? categoryId, int page)
     {
         var courses = _db.Cources.AsQueryable();
         if (!String.IsNullOrEmpty(searchText))
@@ -31,7 +31,7 @@ public class CourseService
         {
             courses = courses.Skip(page * 15);
         }
-        if(categoryId != null)
+        if (categoryId != null)
         {
             courses = courses.Where(c => c.Category.CategoryId == categoryId);
         }
@@ -84,7 +84,7 @@ public class CourseService
                                c.Image.FileId,
                                c.Lectures.Select(e => new EpisodeInfo(e.LectureId, e.Index, e.Description, e.Free)))))
             .FirstOrDefaultAsync();
-        if(course is null)
+        if (course is null)
         {
             throw new NotFoundException("The requested course does not exist.");
         }
@@ -95,8 +95,18 @@ public class CourseService
     {
         return await _db.Categories.ToListAsync();
     }
-    public async Task<Course> CreateCourse(Guid TeacherId,CreateCourseRequest data)
+    public async Task<Course> CreateCourse(Guid TeacherId, CreateCourseRequest data)
     {
+        var lectures = data.Lectures.Select(l =>
+            new Lecture()
+            {
+                Description = l.Description,
+                Duration = l.Duration,
+                Index = l.Index,
+                Free = l.Free
+            }
+        ).ToList();
+
         var newCourse = new Course()
         {
             TeacherId = TeacherId,
@@ -108,7 +118,8 @@ public class CourseService
             Discount = data.Discount,
             Price = data.Price,
             ShortDescription = data.ShortDescription,
-            ViewCount = 0
+            ViewCount = 0,
+            Lectures = lectures
         };
         _db.Cources.Add(newCourse);
         await _db.SaveChangesAsync();
@@ -129,15 +140,15 @@ public class CourseService
     }
     public async Task<Lecture?> UploadLecture(UploadLectureRequest request)
     {
-        var lecture = await _db.Lectures.Include(l => l.File).Where(l=> l.LectureId == request.LectureId).FirstOrDefaultAsync();
-        if(lecture is null)
+        var lecture = await _db.Lectures.Include(l => l.File).Where(l => l.LectureId == request.LectureId).FirstOrDefaultAsync();
+        if (lecture is null)
         {
             throw new NotFoundException("Requested lecture does not exist.");
         }
 
         var file = await _fileService.UploadFile(request.File);
 
-        if(lecture.File is not null)
+        if (lecture.File is not null)
         {
             System.IO.File.Delete(lecture.File.FileName);
             _db.Files.Remove(lecture.File);
@@ -147,5 +158,37 @@ public class CourseService
         await _db.SaveChangesAsync();
         return lecture;
 
+    }
+
+    public async Task<IEnumerable<CommentResponse>> GetComments(Guid CourseId)
+    {
+        var comments = await _db.Comments.Where(c => c.WrittenTo.CourseId == CourseId)
+            .Select(c => new CommentResponse
+            {
+                UserId = c.WrittenBy.UserId,
+                Text = c.Text,
+                Submited = c.Submited
+            }).ToListAsync();
+        return comments;
+    }
+
+    internal async Task<CommentResponse> AddComment(Guid userId, SendCommentRequest request)
+    {
+        var newComment = new Comment()
+        {
+            Submited = DateTime.Now,
+            Text = request.Text,
+            WrittenBy = _db.Users.Find(userId)!,
+            WrittenTo = _db.Cources.Find(request.CourseId)!
+        };
+        _db.Comments.Add(newComment);
+        await _db.SaveChangesAsync();
+
+        return new CommentResponse()
+        {
+            Submited = newComment.Submited,
+            UserId = userId,
+            Text = request.Text,
+        };
     }
 }

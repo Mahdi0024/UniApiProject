@@ -1,13 +1,13 @@
-﻿using ApiProject.Data;
-using ApiProject.Exceptions;
-using ApiProject.Models;
-using ApiProject.Services;
+﻿using UniApiProject.Data;
+using UniApiProject.Exeptions;
+using UniApiProject.Models;
+using UniApiProject.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using UniApiProject.Models.Requests;
 using UniApiProject.Models.Responses;
 
-namespace ApiProject.Controllers;
+namespace UniApiProject.Controllers;
 
 [Route("Api/Auth")]
 public class AuthController : ControllerBase
@@ -75,6 +75,7 @@ public class AuthController : ControllerBase
             FirstName = data.FirstName,
             LastName = data.LastName,
             DateRegistered = DateTime.Now,
+            Role = data.UserRole
         };
         _db.Users.Add(newUser);
         await _db.SaveChangesAsync();

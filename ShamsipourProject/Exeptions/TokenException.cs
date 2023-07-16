@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace UniApiProject.Exceptions
+namespace UniApiProject.Exeptions
 {
     [Serializable]
     internal class TokenException : Exception

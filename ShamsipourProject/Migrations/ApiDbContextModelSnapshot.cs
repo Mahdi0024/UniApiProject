@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using ApiProject.Data;
+using UniApiProject.Data;
 
 #nullable disable
 
-namespace ApiProject.Migrations
+namespace UniApiProject.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
     partial class ApiDbContextModelSnapshot : ModelSnapshot
@@ -22,7 +22,7 @@ namespace ApiProject.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("ShamsipourProject.Models.Banner", b =>
+            modelBuilder.Entity("UniApiProject.Models.Banner", b =>
                 {
                     b.Property<Guid>("BannerID")
                         .ValueGeneratedOnAdd()
@@ -41,7 +41,7 @@ namespace ApiProject.Migrations
                     b.ToTable("Banners");
                 });
 
-            modelBuilder.Entity("ShamsipourProject.Models.Category", b =>
+            modelBuilder.Entity("UniApiProject.Models.Category", b =>
                 {
                     b.Property<Guid>("CategoryId")
                         .ValueGeneratedOnAdd()
@@ -56,7 +56,35 @@ namespace ApiProject.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("ShamsipourProject.Models.Course", b =>
+            modelBuilder.Entity("UniApiProject.Models.Comment", b =>
+                {
+                    b.Property<Guid>("CommentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Submited")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("WrittenByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("WrittenToCourseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("CommentId");
+
+                    b.HasIndex("WrittenByUserId");
+
+                    b.HasIndex("WrittenToCourseId");
+
+                    b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("UniApiProject.Models.Course", b =>
                 {
                     b.Property<Guid>("CourseId")
                         .ValueGeneratedOnAdd()
@@ -78,9 +106,8 @@ namespace ApiProject.Migrations
                     b.Property<int>("Discount")
                         .HasColumnType("int");
 
-                    b.Property<string>("Image")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("ImageFileId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<long>("Price")
                         .HasColumnType("bigint");
@@ -101,10 +128,14 @@ namespace ApiProject.Migrations
 
                     b.HasKey("CourseId");
 
-                    b.ToTable("Courses");
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("ImageFileId");
+
+                    b.ToTable("Cources");
                 });
 
-            modelBuilder.Entity("ShamsipourProject.Models.CourseProgress", b =>
+            modelBuilder.Entity("UniApiProject.Models.CourseProgress", b =>
                 {
                     b.Property<Guid>("ProgressId")
                         .ValueGeneratedOnAdd()
@@ -119,7 +150,7 @@ namespace ApiProject.Migrations
                     b.Property<Guid>("CourseId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("EpisodeId")
+                    b.Property<Guid>("LectureId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("StudentId")
@@ -130,9 +161,27 @@ namespace ApiProject.Migrations
                     b.ToTable("CourseProgresses");
                 });
 
-            modelBuilder.Entity("ShamsipourProject.Models.Episode", b =>
+            modelBuilder.Entity("UniApiProject.Models.File", b =>
                 {
-                    b.Property<Guid>("EpisodeId")
+                    b.Property<Guid>("FileId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("Size")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("FileId");
+
+                    b.ToTable("Files");
+                });
+
+            modelBuilder.Entity("UniApiProject.Models.Lecture", b =>
+                {
+                    b.Property<Guid>("LectureId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -155,34 +204,16 @@ namespace ApiProject.Migrations
                     b.Property<int>("Index")
                         .HasColumnType("int");
 
-                    b.HasKey("EpisodeId");
+                    b.HasKey("LectureId");
 
                     b.HasIndex("CourseId");
 
                     b.HasIndex("FileId");
 
-                    b.ToTable("Episode");
+                    b.ToTable("Lectures");
                 });
 
-            modelBuilder.Entity("ShamsipourProject.Models.File", b =>
-                {
-                    b.Property<Guid>("FileId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("FileName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("Size")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("FileId");
-
-                    b.ToTable("Files");
-                });
-
-            modelBuilder.Entity("ShamsipourProject.Models.User", b =>
+            modelBuilder.Entity("UniApiProject.Models.User", b =>
                 {
                     b.Property<Guid>("UserId")
                         .ValueGeneratedOnAdd()
@@ -237,9 +268,9 @@ namespace ApiProject.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("ShamsipourProject.Models.Banner", b =>
+            modelBuilder.Entity("UniApiProject.Models.Banner", b =>
                 {
-                    b.HasOne("ShamsipourProject.Models.File", "File")
+                    b.HasOne("UniApiProject.Models.File", "File")
                         .WithMany()
                         .HasForeignKey("FileId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -248,33 +279,76 @@ namespace ApiProject.Migrations
                     b.Navigation("File");
                 });
 
-            modelBuilder.Entity("ShamsipourProject.Models.Episode", b =>
+            modelBuilder.Entity("UniApiProject.Models.Comment", b =>
                 {
-                    b.HasOne("ShamsipourProject.Models.Course", null)
-                        .WithMany("Episodes")
+                    b.HasOne("UniApiProject.Models.User", "WrittenBy")
+                        .WithMany("Comments")
+                        .HasForeignKey("WrittenByUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("UniApiProject.Models.Course", "WrittenTo")
+                        .WithMany()
+                        .HasForeignKey("WrittenToCourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("WrittenBy");
+
+                    b.Navigation("WrittenTo");
+                });
+
+            modelBuilder.Entity("UniApiProject.Models.Course", b =>
+                {
+                    b.HasOne("UniApiProject.Models.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("UniApiProject.Models.File", "Image")
+                        .WithMany()
+                        .HasForeignKey("ImageFileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Image");
+                });
+
+            modelBuilder.Entity("UniApiProject.Models.Lecture", b =>
+                {
+                    b.HasOne("UniApiProject.Models.Course", null)
+                        .WithMany("Lectures")
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ShamsipourProject.Models.File", "File")
+                    b.HasOne("UniApiProject.Models.File", "File")
                         .WithMany()
                         .HasForeignKey("FileId");
 
                     b.Navigation("File");
                 });
 
-            modelBuilder.Entity("ShamsipourProject.Models.User", b =>
+            modelBuilder.Entity("UniApiProject.Models.User", b =>
                 {
-                    b.HasOne("ShamsipourProject.Models.File", "ProfilePicture")
+                    b.HasOne("UniApiProject.Models.File", "ProfilePicture")
                         .WithMany()
                         .HasForeignKey("ProfilePictureFileId");
 
                     b.Navigation("ProfilePicture");
                 });
 
-            modelBuilder.Entity("ShamsipourProject.Models.Course", b =>
+            modelBuilder.Entity("UniApiProject.Models.Course", b =>
                 {
-                    b.Navigation("Episodes");
+                    b.Navigation("Lectures");
+                });
+
+            modelBuilder.Entity("UniApiProject.Models.User", b =>
+                {
+                    b.Navigation("Comments");
                 });
 #pragma warning restore 612, 618
         }

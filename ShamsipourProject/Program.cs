@@ -1,11 +1,15 @@
-using ApiProject.Data;
-using ApiProject.Swagger;
+using UniApiProject.Data;
+using UniApiProject.Swagger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Text;
+using UniApiProject.Services;
+using UniApiProject.Models;
+using UniApiProject.Middlewares;
+using Microsoft.AspNetCore.Builder;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
@@ -46,7 +50,16 @@ services.AddAuthorization(options =>
 services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 services.AddDbContext<ApiDbContext>(o => o.UseSqlServer(config.GetConnectionString("SqlServer")));
 
-//services.AddSingleton<CourseService>();
+services.AddTransient<CourseService>();
+services.AddTransient<UserService>();
+services.AddSingleton<AuthService>();
+services.AddSingleton<FileServiceConfiguration>(
+    new FileServiceConfiguration
+    {
+        FileDirectory = config["FileSettings:FileDirectory"]!,
+        TempDirectory = config["FileSettings:TempDirectory"]!
+    });
+services.AddTransient<FileService>();
 
 var app = builder.Build();
 
@@ -57,6 +70,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseMiddleware<ErrorHandlerMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();

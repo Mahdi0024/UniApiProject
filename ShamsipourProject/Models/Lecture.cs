@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ApiProject.Models;
+namespace UniApiProject.Models;
 
 public class Lecture
 {

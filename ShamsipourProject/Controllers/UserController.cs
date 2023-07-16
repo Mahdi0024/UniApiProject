@@ -1,13 +1,13 @@
-﻿using ApiProject.Data;
+﻿using UniApiProject.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using UniApiProject.Exceptions;
+using UniApiProject.Exeptions;
 using UniApiProject.Models.Requests;
 using UniApiProject.Helpers;
 using UniApiProject.Services;
 
-namespace ApiProject.Controllers;
+namespace UniApiProject.Controllers;
 
 [Route("Api/User")]
 public class UserController:ControllerBase
@@ -37,6 +37,12 @@ public class UserController:ControllerBase
         return Ok();
     }
 
-
+    [HttpPost("setImage")]
+    [Authorize(Roles = "Teacher,User")]
+    public async Task<IActionResult> SetCourseImage(SetUserImageRequest request)
+    {
+        await _userService.SetUserImage(request);
+        return Ok();
+    }
 
 }

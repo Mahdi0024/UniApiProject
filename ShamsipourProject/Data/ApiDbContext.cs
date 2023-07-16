@@ -1,8 +1,8 @@
-﻿using ApiProject.Models;
+﻿using UniApiProject.Models;
 using Microsoft.EntityFrameworkCore;
-using File = ApiProject.Models.File;
+using File = UniApiProject.Models.File;
 
-namespace ApiProject.Data;
+namespace UniApiProject.Data;
 
 public class ApiDbContext : DbContext
 {
@@ -13,6 +13,7 @@ public class ApiDbContext : DbContext
     public DbSet<Course> Cources { get; set; }
     public DbSet<Lecture> Lectures { get; set; }
     public DbSet<Category> Categories { get; set; }
+    public DbSet<Comment> Comments { get; set; }
 
     public ApiDbContext(DbContextOptions options) : base(options)
     {

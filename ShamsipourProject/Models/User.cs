@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ApiProject.Models;
+namespace UniApiProject.Models;
 
 public class User
 {
@@ -19,4 +19,5 @@ public class User
     public UserRole Role { get; set; }
     public string? Bio { get; set; }
     public File? ProfilePicture { get; set; }
+    public ICollection<Comment> Comments { get; set; } = new List<Comment>();
 }

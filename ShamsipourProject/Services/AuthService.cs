@@ -1,11 +1,11 @@
-﻿using ApiProject.Models;
+﻿using UniApiProject.Models;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace ApiProject.Services;
+namespace UniApiProject.Services;
 
 public class AuthService
 {
@@ -16,7 +16,7 @@ public class AuthService
     public AuthService(IConfiguration configuration)
     {
         _configuration = configuration;
-        var secKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!));
+        var secKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:Key"]!));
         _signingCredentials = new SigningCredentials(secKey, SecurityAlgorithms.HmacSha512);
         _tokenHandler = new JwtSecurityTokenHandler();
     }
@@ -37,18 +37,23 @@ public class AuthService
 
     public string GenerateJsonWebToken(User user)
     {
-        var claims = new Claim[]
+        var claims = new List<Claim>
         {
             new("id",user.UserId.ToString()),
             new("username",user.Username),
             new(ClaimTypes.Role,user.Role.ToString())
         };
+        if(user.Role is UserRole.Administrator)
+        {
+            claims.Add(new(ClaimTypes.Role, "Teacher"));
+            claims.Add(new(ClaimTypes.Role, "Student"));
+        }
 
         var token = new JwtSecurityToken(
             issuer: _configuration["Jwt:Issuer"],
             audience: _configuration["Jwt:Audience"],
             claims: claims,
-            expires: DateTime.Now.AddMinutes(20),
+            expires: DateTime.Now.AddMinutes(60),
             signingCredentials: _signingCredentials
             );
 
